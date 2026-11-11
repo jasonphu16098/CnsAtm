@@ -1,0 +1,416 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Quiz CNS/ATM</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Bố cục: một cột tối đa 860px, thanh trạng thái dính trên cùng, thanh hành động dính dưới cùng khi làm bài.
+   Giao diện cố định một tông xanh dương tối, lời giải thích hiện ngay trong từng phương án sau khi trả lời. */
+:root{
+  --bg:#0b2150;
+  --bg-deep:#071a42;
+  --card:#12306f;
+  --card-hi:#1a4090;
+  --line:#2a54ad;
+  --line-soft:#1f438f;
+  --ink:#f2f6ff;
+  --mute:#b4c6ec;
+  --acc:#5aa2ff;
+  --acc-fill:#2468e0;
+  --acc-fill-hi:#3a7bf0;
+  --acc-line:#7db4ff;
+  --on-acc:#ffffff;
+  --ok:#7df0b0;
+  --ok-bg:#0d4636;
+  --ok-line:#2bbf84;
+  --on-ok:#04261b;
+  --bad:#ffb4bc;
+  --bad-bg:#561a32;
+  --bad-line:#ff6b7d;
+  --on-bad:#2b0710;
+  --warn:#ffd98a;
+  --glow-a:rgba(90,162,255,.22);
+  --glow-b:rgba(36,104,224,.18);
+  --font:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--bg);scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px)}
+body{margin:0;min-height:100vh;background-color:var(--bg);background-image:radial-gradient(900px 420px at 88% -120px,var(--glow-a),transparent 70%),radial-gradient(760px 380px at -12% 36%,var(--glow-b),transparent 70%);background-repeat:no-repeat;color:var(--ink);font:16px/1.6 var(--font);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg-deep);z-index:20}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+h1,h2,h3,p{margin:0}
+
+.wrap{max-width:860px;margin:0 auto;padding-block:0 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap.q{padding-block:0 120px}
+
+/* thanh trên */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:21;background:var(--bg-deep);border-bottom:1px solid var(--line-soft)}
+.top .in{max-width:860px;margin:0 auto;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;margin-right:auto;min-width:0}
+.brand svg{flex:none}
+.brand span{overflow-wrap:anywhere}
+.pill{background:var(--card);border:1px solid var(--line-soft);border-radius:999px;padding:3px 12px;font-size:.85rem;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pill b{color:var(--ok)}
+.bar{height:5px;background:var(--card)}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc-fill),var(--acc));transition:width .3s}
+.link{background:none;border:0;color:var(--acc);cursor:pointer;padding:4px 2px;text-decoration:underline;font-size:.9rem}
+
+/* trang chủ */
+.hero{padding-top:38px}
+.eyebrow{color:var(--acc);font-weight:700;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.hero h1{font-size:clamp(1.9rem,6vw,3rem);line-height:1.12;font-weight:800}
+.nb{white-space:nowrap}
+.hero p{color:var(--mute);max-width:58ch;margin-top:14px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;margin-top:22px;max-width:620px}
+.fact{background:var(--bg-deep);border:1px solid var(--line-soft);border-radius:14px;padding:10px 16px;min-width:0}
+.fact b{display:block;font-size:1.5rem;line-height:1.2;font-weight:800;font-variant-numeric:tabular-nums}
+.fact span{color:var(--mute);font-size:.82rem}
+h2{font-size:1.05rem;font-weight:700;margin:34px 0 14px;display:flex;align-items:center;gap:10px}
+h2 i{font-style:normal;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--acc-fill);color:var(--on-acc);font-size:.85rem}
+.sets{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+.set{position:relative;display:flex;flex-direction:column;gap:3px;text-align:left;background:var(--card);border:2px solid var(--line-soft);border-radius:16px;padding:14px 14px 12px;cursor:pointer;transition:border-color .15s,background .15s,transform .15s;min-width:0}
+.set:hover{border-color:var(--acc);transform:translateY(-1px)}
+.set[aria-pressed="true"]{border-color:var(--acc);background:var(--card-hi)}
+.set[aria-pressed="true"]::after{content:"✓";position:absolute;top:10px;right:12px;width:22px;height:22px;border-radius:50%;background:var(--acc-fill);color:var(--on-acc);display:grid;place-items:center;font-size:.8rem;font-weight:800}
+.sn{font-size:1.9rem;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
+.sn small{display:block;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:2px}
+.sc{color:var(--mute);font-size:.88rem;font-variant-numeric:tabular-nums}
+.pb{display:flex;height:6px;border-radius:999px;background:var(--bg-deep);overflow:hidden;margin-top:8px}
+.pb i{display:block;height:100%}
+.pb .g{background:var(--ok-line)}
+.pb .r{background:var(--bad-line)}
+.sm{color:var(--mute);font-size:.76rem;min-height:1.2em;font-variant-numeric:tabular-nums}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:14px}
+.hint2{color:var(--mute);font-size:.88rem;margin-top:14px;max-width:70ch}
+.opts-row{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}
+.lab{color:var(--mute);font-size:.9rem;font-weight:600}
+.seg{display:inline-flex;background:var(--bg-deep);border:1px solid var(--line-soft);border-radius:12px;padding:3px;gap:2px}
+.seg button{background:none;border:0;border-radius:9px;padding:7px 14px;cursor:pointer;font-weight:600;font-size:.92rem;color:var(--mute)}
+.seg button[aria-pressed="true"]{background:var(--acc-fill);color:var(--on-acc)}
+.tog{display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;font-size:.92rem}
+.tog input{width:18px;height:18px;accent-color:var(--acc-fill)}
+.btn{border-radius:14px;padding:13px 22px;font-weight:700;cursor:pointer;background:var(--card-hi);border:2px solid var(--line);transition:background .15s,border-color .15s}
+.btn:hover:not([disabled]){border-color:var(--acc)}
+.btn.pri{background:var(--acc-fill);border-color:var(--acc-line);color:var(--on-acc)}
+.btn.pri:hover:not([disabled]){background:var(--acc-fill-hi)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn.big{padding:15px 28px;font-size:1.05rem}
+.note{color:var(--mute);font-size:.88rem;margin-top:26px;max-width:70ch;border-left:3px solid var(--line);padding-left:14px}
+.note + .note{margin-top:12px}
+
+/* làm bài */
+.qcard{margin-top:22px;background:var(--card);border:1px solid var(--line-soft);border-radius:20px;padding:22px 22px 24px}
+.tag{color:var(--mute);font-size:.82rem;margin-bottom:10px;font-variant-numeric:tabular-nums}
+.qt{font-size:clamp(1.1rem,2.8vw,1.32rem);font-weight:600;line-height:1.5;overflow-wrap:anywhere;text-wrap:pretty}
+.chip{display:inline-block;margin-top:10px;background:var(--bg-deep);border:1px solid var(--warn);color:var(--warn);border-radius:999px;padding:2px 12px;font-size:.84rem;font-weight:600}
+.opts{display:grid;gap:10px;margin-top:18px}
+.opt{display:flex;gap:13px;align-items:flex-start;text-align:left;width:100%;padding:13px 14px;border-radius:14px;background:var(--bg);border:2px solid var(--line-soft);transition:border-color .15s,background .15s}
+button.opt{cursor:pointer}
+button.opt:hover{border-color:var(--acc)}
+.lt{flex:none;width:34px;height:34px;border-radius:10px;background:var(--card-hi);display:grid;place-items:center;font-weight:700;font-size:.92rem}
+.ob{display:flex;flex-direction:column;gap:6px;min-width:0;padding-top:4px}
+.ot{overflow-wrap:anywhere}
+.opt.sel{border-color:var(--acc);background:var(--card-hi)}
+.opt.sel .lt{background:var(--acc-fill)}
+.opt.ok{border-color:var(--ok-line);background:var(--ok-bg)}
+.opt.ok .lt{background:var(--ok-line);color:var(--on-ok)}
+.opt.bad{border-color:var(--bad-line);background:var(--bad-bg)}
+.opt.bad .lt{background:var(--bad-line);color:var(--on-bad)}
+.opt.miss{border-style:dashed}
+.tg{font-size:.8rem;font-weight:700;letter-spacing:.02em}
+.opt.ok .tg{color:var(--ok)}
+.opt.bad .tg{color:var(--bad)}
+.on{color:var(--mute);font-size:.92rem;line-height:1.5;overflow-wrap:anywhere}
+.opt.ok .on,.opt.bad .on{color:var(--ink)}
+.ex,.flag{margin-top:16px;border-radius:16px;padding:16px 18px;scroll-margin-bottom:104px}
+.ex{background:var(--bg-deep);border:1px solid var(--line)}
+.flag{background:var(--bg-deep);border:1px solid var(--warn)}
+.ex h3,.flag h3{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-weight:800;margin-bottom:6px}
+.ex h3{color:var(--acc)}
+.flag h3{color:var(--warn)}
+.ex p,.flag p{overflow-wrap:anywhere}
+.kb{color:var(--mute);font-size:.8rem;margin-top:14px;text-align:center}
+@media (hover:none){.kb{display:none}}
+
+/* thanh hành động dưới */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:22;background:var(--bg-deep);border-top:1px solid var(--line);padding-top:10px;padding-bottom:max(10px,env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.dk{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.vd{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.35;font-size:.9rem;color:var(--mute)}
+.vd b{font-size:1.02rem}
+.vd.ok b{color:var(--ok)}
+.vd.bad b{color:var(--bad)}
+.vd span{overflow-wrap:anywhere}
+.dk .btn{padding:11px 18px;flex:none}
+
+/* kết quả */
+.score{margin-top:26px;background:var(--card);border:1px solid var(--line-soft);border-radius:22px;padding:28px 22px;text-align:center}
+.ring{width:176px;height:176px;max-width:60vw;display:block;margin:6px auto 0}
+.rt{fill:none;stroke:var(--bg-deep);stroke-width:10}
+.rv{fill:none;stroke:var(--ok-line);stroke-width:10;stroke-linecap:round;transition:stroke-dasharray .6s}
+.rv.low{stroke:var(--warn)}
+.rp{font:800 26px var(--font);fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.sc2{font-size:1.5rem;font-weight:800;margin-top:12px;font-variant-numeric:tabular-nums}
+.sc2 small{font-size:.6em;color:var(--mute);font-weight:600}
+.sub2{color:var(--mute);margin-top:2px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.wl{margin-top:12px;display:grid;gap:8px}
+details{background:var(--card);border:1px solid var(--line-soft);border-radius:14px;padding:11px 16px}
+summary{cursor:pointer;font-weight:600;overflow-wrap:anywhere}
+details p{margin-top:8px;color:var(--mute);overflow-wrap:anywhere}
+details b{color:var(--ink)}
+details .bd{color:var(--bad)}
+details .gd{color:var(--ok)}
+@media (max-width:520px){
+  .top.quiz .brand span{display:none}
+  .set{padding:12px 11px 10px}
+  .sm{font-size:.72rem}
+  .qcard{padding:18px 14px 20px;border-radius:18px}
+  .hero{padding-top:26px}
+  .dk .btn{padding:10px 14px;font-size:.92rem}
+  .btn{padding:12px 16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div id="app"></div>
+<noscript>Trang này cần bật JavaScript để làm bài.</noscript>
+
+<script>const DATA=[{"s":4,"n":"4.1","q":"Phương pháp dẫn đường hàng không hiện tại là:","o":["Tính toán dựa trên sự tích hợp dữ liệu vận tốc của tàu bay","Hệ thống dẫn đường quán tính","Đài dẫn đường vô hướng","Đài dẫn đường đa hướng sóng cực ngắn"],"a":[3],"e":"Dẫn đường hàng không hiện nay dựa chủ yếu vào các đài vô tuyến đặt trên mặt đất. Đài dẫn đường đa hướng sóng cực ngắn (VOR) là phương tiện chính trên đường bay.","w":{"a":"Dẫn đường tính toán từ vận tốc là nguyên lý của dẫn đường quán tính, một phương pháp tự thân trên tàu bay.","b":"Dẫn đường quán tính (INS) có trên nhiều tàu bay đường dài nhưng tính toán vị trí độc lập với đài mặt đất.","c":"Đài vô hướng (NDB) là phương tiện cũ, độ chính xác thấp hơn VOR."},"f":"Bản dán không đánh dấu đáp án, đây là đáp án được chọn theo kiến thức CNS/ATM. Độ chắc chắn thấp: cả bốn phương án đều là phương pháp đang được dùng nên câu hỏi mơ hồ. Đáp án được chọn là VOR vì đây là phương tiện chính trên đường bay hiện nay."},{"s":4,"n":"4.2","q":"Hệ thống nào không phải là hệ thống dẫn đường hàng không hiện tại?","o":["Hệ thống dẫn đường quán tính","Hệ thống hạ cánh bằng thiết bị","Hệ thống dẫn đường tầm xa Loran-C","Hệ thống thông tin liên lạc CPDLC"],"a":[3],"e":"CPDLC là hệ thống liên lạc dữ liệu giữa kiểm soát viên và phi công, thuộc thành phần liên lạc (C) của CNS, không dùng để dẫn đường.","w":{"a":"Dẫn đường quán tính là hệ thống dẫn đường tự thân trên tàu bay.","b":"Hệ thống hạ cánh bằng thiết bị (ILS) dẫn tàu bay vào đường băng khi tiếp cận hạ cánh.","c":"Loran-C là hệ thống dẫn đường tầm xa dùng sóng dài từ các đài mặt đất."}},{"s":4,"n":"4.3","q":"Dạng hệ thống dẫn đường nào có chức năng phù hợp nhất với không phận Vùng lục địa, chuyến bay en-route?","o":["GNSS + SBAS + ABAS.","GNSS + SBAS.","GNSS + ABAS + LAAS (GBAS).","ILS/MLS."],"a":[0],"e":"Trên đường bay vùng lục địa, GNSS là phương tiện dẫn đường chính. ABAS kiểm tra tính toàn vẹn ngay trên tàu bay, SBAS bổ sung số hiệu chỉnh và cảnh báo từ vệ tinh địa tĩnh, nên tổ hợp GNSS + SBAS + ABAS đáp ứng giai đoạn bay đường dài.","w":{"b":"GNSS + SBAS thiếu ABAS, tức thiếu lớp kiểm tra tính toàn vẹn trên tàu bay.","c":"LAAS (GBAS) phục vụ tiếp cận và hạ cánh chính xác quanh sân bay, không dành cho giai đoạn en-route.","d":"ILS và MLS là hệ thống hạ cánh bằng thiết bị, không dùng cho đường bay."},"f":"Bản dán không đánh dấu đáp án, đây là đáp án được chọn theo kiến thức CNS/ATM. Độ chắc chắn thấp: câu 4.3 và 4.4 có chung một phương án (GNSS + SBAS + ABAS) nên khó phân biệt đáp án của hai câu."},{"s":4,"n":"4.4","q":"Dạng hệ thống dẫn đường nào có chức năng phù hợp nhất với không phận Vùng biển, chuyến bay en-route?","o":["GNSS + ABAS.","GNSS + ABAS + LAAS (GBAS).","GNSS + SBAS + ABAS.","GNSS + SBAS."],"a":[2],"e":"Vùng biển không có đài mặt đất. Vệ tinh địa tĩnh của SBAS phủ vùng rộng gồm cả biển, ABAS giám sát tính toàn vẹn trên tàu bay, nên GNSS + SBAS + ABAS phù hợp nhất.","w":{"a":"GNSS + ABAS dùng được nhưng không có số hiệu chỉnh diện rộng của SBAS.","b":"LAAS (GBAS) là hệ thống đặt ở sân bay cho hạ cánh chính xác, không có trên biển.","d":"GNSS + SBAS thiếu ABAS, tức thiếu lớp kiểm tra tính toàn vẹn trên tàu bay."},"f":"Bản dán không đánh dấu đáp án, đây là đáp án được chọn theo kiến thức CNS/ATM. Độ chắc chắn thấp: đáp án này trùng chuỗi với phương án A của câu 4.3, nên dễ nhầm giữa hai câu. Căn cứ chọn: SBAS ở câu 4.5 được mô tả là phủ vùng biển."},{"s":4,"n":"4.5","q":"Hệ thống tăng cường GNSS: SBAS đáp ứng các yêu cầu nào dưới đây?","o":["Chỉ phát hiện lỗi.","Tầm phủ rộng (hầu như toàn cầu, vùng biển).","Phát hiện và khử lỗi.","Cung ứng độ chính xác cao cho ứng dụng hạ cánh."],"a":[1],"e":"SBAS dùng vệ tinh địa tĩnh phát số hiệu chỉnh và thông tin toàn vẹn trên diện rộng, nên phủ gần toàn cầu, kể cả vùng biển.","w":{"a":"Chỉ phát hiện lỗi là mô tả của RAIM.","c":"Phát hiện và khử lỗi là mô tả của AAIM.","d":"Độ chính xác cao cho hạ cánh là đặc trưng của GBAS, đặt tại sân bay."}},{"s":4,"n":"4.6","q":"Hệ thống tăng cường GNSS: GBAS đáp ứng các yêu cầu nào dưới đây?","o":["Phát hiện và khử lỗi.","Cung ứng độ chính xác cao cho ứng dụng hạ cánh.","Tầm phủ rộng (hầu như toàn cầu, vùng biển).","Tầm phủ rộng nhưng không có vệ tinh địa tĩnh bao phủ."],"a":[1],"e":"GBAS gồm trạm mặt đất đặt tại sân bay, phát số hiệu chỉnh cho tàu bay quanh sân bay, cho độ chính xác đủ để tiếp cận và hạ cánh chính xác.","w":{"a":"Phát hiện và khử lỗi là mô tả của AAIM.","c":"Tầm phủ rộng gần toàn cầu, kể cả vùng biển, là mô tả của SBAS.","d":"Đây là mô tả của hệ thống tăng cường mặt đất cho khu vực rộng (GRAS), khác với GBAS."}},{"s":4,"n":"4.7","q":"Hệ thống tăng cường GNSS: tính năng RAIM, đáp ứng các yêu cầu nào dưới đây?","o":["Chỉ phát hiện lỗi.","Cung ứng độ chính xác cao cho ứng dụng hạ cánh.","Tầm phủ rộng nhưng không có vệ tinh địa tĩnh bao phủ.","Phát hiện và khử lỗi."],"a":[0],"e":"RAIM là thuật toán trong máy thu GNSS, kiểm tra tính nhất quán của các vệ tinh đang thu. Ở mức cơ bản nó phát hiện được vệ tinh lỗi mà chưa loại được.","w":{"b":"Độ chính xác cao cho hạ cánh là đặc trưng của GBAS.","c":"Tầm phủ rộng không có vệ tinh địa tĩnh là mô tả của GRAS.","d":"Phát hiện và khử lỗi là mô tả của AAIM, dùng thêm dữ liệu từ thiết bị khác trên tàu bay."},"f":"Bản dán không đánh dấu đáp án. Độ chắc chắn trung bình: RAIM có phiên bản FDE vừa phát hiện vừa loại vệ tinh lỗi. Theo cách chia của bài, RAIM ứng với “chỉ phát hiện lỗi” và AAIM ứng với “phát hiện và khử lỗi”."},{"s":4,"n":"4.8","q":"Hệ thống tăng cường GNSS: tính năng AAIM, đáp ứng các yêu cầu nào dưới đây?","o":["Cung ứng độ chính xác cao cho ứng dụng hạ cánh.","Phát hiện và khử lỗi.","Tầm phủ rộng nhưng không có vệ tinh địa tĩnh bao phủ.","Chỉ phát hiện lỗi"],"a":[1],"e":"AAIM bổ sung cho máy thu GNSS thông tin từ thiết bị khác trên tàu bay, như đo độ cao khí áp hoặc dẫn đường quán tính, nên vừa phát hiện vừa khử được vệ tinh lỗi.","w":{"a":"Độ chính xác cao cho hạ cánh là đặc trưng của GBAS.","c":"Tầm phủ rộng không có vệ tinh địa tĩnh là mô tả của GRAS.","d":"Chỉ phát hiện lỗi là mô tả của RAIM."},"f":"Bản dán không đánh dấu đáp án. Độ chắc chắn trung bình: đáp án dựa trên cách chia RAIM chỉ phát hiện, AAIM phát hiện và khử lỗi, cùng cách chia với câu 4.7."},{"s":4,"n":"4.13","q":"Phần cốt lõi của hệ thống dẫn đường trong tương lai","o":["Hệ thống vệ tinh toàn cầu","Hệ thống dẫn đường quán tính","Hệ thống hạ cánh bằng thiết bị","Hệ thống dẫn đường tầm xa Loran-C"],"a":[0],"e":"Hệ thống vệ tinh dẫn đường toàn cầu (GNSS) là nền tảng dẫn đường của CNS/ATM trong tương lai, các hệ thống tăng cường bổ sung cho nó.","w":{"b":"Dẫn đường quán tính là thiết bị tự thân, đóng vai trò bổ trợ cho GNSS.","c":"Hệ thống hạ cánh bằng thiết bị chỉ phục vụ giai đoạn hạ cánh.","d":"Loran-C là hệ thống mặt đất đã ngừng khai thác ở nhiều nước."}},{"s":4,"n":"4.14","q":"Đặc trưng chính của hệ thống vệ tinh dẫn đường (GNSS)","o":["Các phương pháp định vị tích phân Doppler hoặc cự ly giả ngẫu nhiên","Các đài dẫn đường là cố định.","Máy bay không yêu cầu cung cấp thông tin thiên văn.","Thiết bị chủ động (luôn luôn phát và nhận)"],"a":[0],"e":"GNSS xác định vị trí bằng đo cự ly giả ngẫu nhiên hoặc tích phân Doppler từ tín hiệu của các vệ tinh đang chuyển động.","w":{"b":"Các đài dẫn đường của GNSS là vệ tinh chuyển động quanh Trái Đất.","c":"Máy thu cần dữ liệu lịch thiên văn của vệ tinh, do chính vệ tinh phát, để tính vị trí.","d":"Máy thu GNSS là thiết bị thụ động, chỉ thu tín hiệu."},"f":"Bản dán không đánh dấu đáp án. Độ chắc chắn trung bình: phương án C diễn đạt khó hiểu, bị loại vì máy thu cần dữ liệu lịch thiên văn."},{"s":4,"n":"4.15","q":"Phương thức dẫn đường trong tương lai","o":["Dẫn đường theo yêu cầu (RNP), Dẫn đường theo khu vực (RNAV), Bay tự do (Free Flight)","Dẫn đường theo yêu cầu (RNP)","Dẫn đường theo khu vực (RNAV)","Bay tự do (Free Flight)"],"a":[0],"e":"Phương thức dẫn đường trong tương lai gồm cả ba: RNP, RNAV và bay tự do (Free Flight). Phương án A là phương án đủ ba.","w":{"b":"Mới nêu RNP, thiếu RNAV và bay tự do.","c":"Mới nêu RNAV, thiếu RNP và bay tự do.","d":"Mới nêu bay tự do, thiếu RNP và RNAV."}},{"s":5,"n":"5.1","q":"Trong giám sát bằng Radar, độ chính xác góc phương vị của tàu bay bị giới hạn, người ta dùng công nghệ nào để khắc phục vấn đề này?","o":["Dùng công nghệ GNSS.","Triển khai ADS qua AMSS hay HFDL.","Lắp radar sơ cấp (PSR) mới.","Sử dụng radar thứ cấp (SSR) Monopulse."],"a":[3],"e":"Radar thứ cấp đơn xung (Monopulse SSR) xác định phương vị ngay từ một lần trả lời của tàu bay bằng cách so sánh tín hiệu ở nhiều chùm thu, nên chính xác hơn SSR thông thường.","w":{"a":"GNSS là công nghệ dẫn đường vệ tinh, không cải thiện góc phương vị của radar.","b":"ADS qua AMSS hay HFDL là giám sát phụ thuộc, dùng cho vùng không có radar.","c":"Radar sơ cấp mới vẫn bị giới hạn bởi độ rộng chùm anten."}},{"s":5,"n":"5.2","q":"Trong giám sát ADS-C, thông tin được cung cấp giúp?","o":["Tránh va chạm trên không.","Kiểm soát di chuyển bề mặt sân bay.","Báo cáo vị trí tàu bay theo yêu cầu.","Giám sát với chế độ chọn lựa (selection)."],"a":[2],"e":"ADS-C là giám sát phụ thuộc theo hợp đồng: tàu bay tự động báo cáo vị trí và các tham số khác cho ATC theo yêu cầu, theo chu kỳ hoặc theo sự kiện.","w":{"a":"Tránh va chạm trên không là chức năng của ACAS.","b":"Kiểm soát di chuyển bề mặt sân bay là chức năng của A-SMGCS.","d":"Giám sát với chế độ chọn lựa là đặc trưng của SSR Mode S."}},{"s":5,"n":"5.3","q":"Hệ thống giám sát nào dưới đây phù hợp nhất với không phận Vùng biển, chuyến bay en-route?","o":["ADS-C nhờ qua mạng liên lạc AMSS.","MSSR Mode S.","ADS-B nhờ qua VDL Mode 4.","ADS-B nhờ qua VHF data link"],"a":[0],"e":"Vùng biển nằm ngoài tầm phủ của radar và của sóng VHF tầm nhìn thẳng, nên báo cáo ADS-C qua vệ tinh (mạng AMSS) là phương án phù hợp nhất.","w":{"b":"MSSR Mode S là radar mặt đất, bị giới hạn bởi tầm nhìn thẳng.","c":"VDL Mode 4 dùng băng tần VHF tầm nhìn thẳng, không phủ biển xa.","d":"Liên lạc dữ liệu VHF cũng chỉ phủ trong tầm nhìn thẳng."}},{"s":5,"n":"5.4","q":"Hệ thống giám sát nào dưới đây phù hợp nhất với không phận Vùng lục địa, mật độ không lưu thấp?","o":["A-SMGCS.","ADS-B nhờ qua VDL Mode 4.","MSSR Mode S.","ADS-B nhờ qua AMSS."],"a":[1],"e":"Ở vùng lục địa có mật độ thấp, ADS-B qua VDL Mode 4 triển khai bằng các trạm mặt đất nhỏ, chi phí thấp hơn đầu tư radar mới cho lưu lượng ít.","w":{"a":"A-SMGCS dành cho di chuyển trên bề mặt sân bay.","c":"MSSR Mode S là radar, vốn đầu tư lớn, phù hợp hơn với mật độ cao.","d":"AMSS là kênh vệ tinh, hợp với vùng biển."},"f":"Bản dán không đánh dấu đáp án. Độ chắc chắn trung bình: đáp án được chọn là ADS-B vì chi phí thấp cho mật độ thấp. MSSR Mode S cũng dùng được ở vùng lục địa."},{"s":5,"n":"5.5","q":"Hệ thống giám sát SSR Mode S cung cấp, hỗ trợ cho ứng dụng nào dưới đây?","o":["Kiểm soát di chuyển bề mặt sân bay.","Báo cáo vị trí tàu bay theo yêu cầu.","Tránh va chạm trên không.","Giám sát tàu bay với chế độ chọn lựa (selection)."],"a":[3],"e":"SSR Mode S hỏi chọn từng tàu bay bằng địa chỉ riêng 24 bit, nên giám sát được với chế độ chọn lựa.","w":{"a":"Kiểm soát di chuyển bề mặt sân bay là chức năng của A-SMGCS.","b":"Báo cáo vị trí theo yêu cầu là chức năng của ADS-C.","c":"Tránh va chạm trên không là chức năng của ACAS."}},{"s":5,"n":"5.6","q":"Hệ thống giám sát ACAS cung cấp, hỗ trợ cho ứng dụng nào dưới đây?","o":["Tránh va chạm trên không.","Báo cáo vị trí tàu bay theo yêu cầu.","Giám sát với chế độ chọn lựa (selection).","Kiểm soát di chuyển bề mặt sân bay."],"a":[0],"e":"ACAS trên tàu bay hỏi bộ phát đáp của các tàu bay xung quanh và đưa ra cảnh báo xung đột, phục vụ tránh va chạm trên không.","w":{"b":"Báo cáo vị trí theo yêu cầu là chức năng của ADS-C.","c":"Giám sát với chế độ chọn lựa là đặc trưng của SSR Mode S.","d":"Kiểm soát di chuyển bề mặt sân bay là chức năng của A-SMGCS."}},{"s":5,"n":"5.7","q":"Hệ thống giám sát Radar SSR Mode S thì yêu cầu thiết bị trên tàu bay phải đáp ứng?","o":["Bộ phát đáp GNSS/ADS.","VHF data link.","Bộ phát đáp Radar SSR Mode S, hay Mode A/C.","HF data link."],"a":[2],"e":"Radar SSR hỏi và nhận trả lời từ bộ phát đáp trên tàu bay, nên tàu bay cần bộ phát đáp SSR Mode S, hoặc Mode A/C tùy mức dịch vụ.","w":{"a":"Bộ phát đáp GNSS/ADS phục vụ giám sát phụ thuộc, không dành cho radar SSR.","b":"Liên lạc dữ liệu VHF phục vụ VDL, không dành cho radar SSR.","d":"Liên lạc dữ liệu HF phục vụ HFDL ở vùng xa, không dành cho radar SSR."}},{"s":5,"n":"5.8","q":"Hệ thống giám sát dưới đất là VDL Mode 4 thì yêu cầu thiết bị trên tàu bay phải đáp ứng?","o":["Bộ phát đáp SSR Mode S.","Bộ phát đáp GNSS/ADS.","VHF data link Avionics.","HF data link Avionics."],"a":[2],"e":"VDL Mode 4 truyền dữ liệu trên băng tần VHF, nên tàu bay cần thiết bị liên lạc dữ liệu VHF (VHF data link avionics), kèm nguồn vị trí từ GNSS.","w":{"a":"Bộ phát đáp SSR Mode S dành cho giám sát bằng radar SSR.","b":"GNSS cung cấp vị trí, nhưng phương tiện truyền tin của VDL Mode 4 là thiết bị VHF.","d":"Thiết bị liên lạc dữ liệu HF dành cho HFDL."}},{"s":5,"n":"5.9","q":"Các lợi ích của việc triển khai ADS-C thông qua ACARS đối với kiểm soát không phận?","o":["Cải thiện việc nhận biết tình trạng đối với phi công.","Giảm tối thiểu phân cách dọc (vertical separation).","Giảm tối thiểu phân cách ngang (horizontal separation).","Cải thiện việc nhận biết tình trạng ATC đối với khu vực không phận không được Radar bao phủ."],"a":[3],"e":"ADS-C qua ACARS cho kiểm soát viên biết vị trí và dữ liệu bay của tàu bay ở vùng không có radar, nên cải thiện sự nhận biết tình trạng không phận của ATC.","w":{"a":"Nhận biết tình trạng cho phi công là lợi ích của ACAS hoặc hiển thị buồng lái, không phải của ATC.","b":"Giảm phân cách dọc phụ thuộc độ chính xác của đo độ cao, ADS-C qua ACARS không nói trực tiếp đến lợi ích này.","c":"Giảm phân cách ngang đạt được khi kết hợp thêm liên lạc CPDLC, phương án D nêu lợi ích trực tiếp hơn."},"f":"Bản dán không đánh dấu đáp án. Độ chắc chắn trung bình: phương án C cũng là lợi ích thực tế ở vùng biển khi kết hợp CPDLC, nhưng phương án D là lợi ích trực tiếp nhất của ADS-C."},{"s":5,"n":"5.10","q":"Hệ thống giám sát A-SMGCS cung cấp, hỗ trợ cho ứng dụng nào dưới đây?","o":["Tránh va chạm trên không.","Báo cáo vị trí tàu bay theo yêu cầu.","Giám sát với chế độ chọn lựa (selection).","Kiểm soát di chuyển bề mặt sân bay."],"a":[3],"e":"A-SMGCS (hệ thống hướng dẫn và kiểm soát di chuyển mặt đất tiên tiến) giám sát và dẫn dắt tàu bay, phương tiện trên đường lăn và đường băng của sân bay.","w":{"a":"Tránh va chạm trên không là chức năng của ACAS.","b":"Báo cáo vị trí theo yêu cầu là chức năng của ADS-C.","c":"Giám sát với chế độ chọn lựa là đặc trưng của SSR Mode S."}},{"s":5,"n":"5.11","q":"Hệ thống giám sát nào dưới đây có các chức năng phù hợp nhất với kiểm soát di chuyển bề mặt sân bay, mật độ lưu thông cao?","o":["ADS-C nhờ qua AMSS.","A-SMGCS.","ADS-B nhờ qua VDL Mode 4.","ADS-C nhờ qua VHF data link"],"a":[1],"e":"Ở sân bay mật độ cao, A-SMGCS giám sát, phát hiện xung đột và dẫn đường tàu bay, phương tiện trên bề mặt, nhờ radar mặt đất SMR kết hợp các cảm biến khác.","w":{"a":"ADS-C qua AMSS (vệ tinh) dành cho báo cáo vị trí ở vùng biển.","c":"ADS-B qua VDL Mode 4 hỗ trợ giám sát nhưng không đủ chức năng kiểm soát bề mặt như A-SMGCS.","d":"ADS-C qua liên lạc dữ liệu VHF dùng để báo cáo vị trí theo hợp đồng."}},{"s":5,"n":"5.13","q":"Hệ thống giám sát độc lập phối hợp cần hệ thống nào?","o":["Sử dụng radar PSR cho ATC sẽ được tăng cường.","Hệ thống tránh va chạm trên không TCAS không được sử dụng.","Radar SSR sẽ được cải thiện do áp dụng kỹ thuật đơn xung và mode A/C.","Radar SSR sẽ được cải thiện do áp dụng kỹ thuật đơn xung và mode S."],"a":[3],"e":"Giám sát độc lập phối hợp dựa vào radar thứ cấp SSR, và hướng cải thiện là kỹ thuật đơn xung kết hợp Mode S.","w":{"a":"Radar sơ cấp PSR là giám sát độc lập không phối hợp, tàu bay không cần trả lời.","b":"TCAS vẫn tiếp tục được sử dụng.","c":"Mode A/C là chế độ hiện có, hướng phát triển là Mode S với hỏi chọn lọc và truyền dữ liệu."},"f":"Bản dán không đánh dấu đáp án. Độ chắc chắn trung bình: câu C và D khác nhau ở Mode A/C và Mode S, đáp án được chọn là Mode S vì đây là hướng phát triển của SSR."},{"s":5,"n":"5.14","q":"Hệ thống giám sát phụ thuộc tự động cần hệ thống nào?","o":["Sử dụng radar SMR cho hệ thống A-SMGCS.","Hệ thống ADS-C sẽ được sử dụng rộng rãi thay vì báo cáo bằng thoại.","ADS-B nhờ qua VDL Mode 4.","Sử dụng radar PSR cho ATC."],"a":[1],"e":"ADS-C là giám sát phụ thuộc tự động: tàu bay tự gửi vị trí lấy từ GNSS cho ATC. Trong giai đoạn chuyển tiếp, ADS-C dần thay báo cáo vị trí bằng thoại.","w":{"a":"Radar SMR là giám sát độc lập không phối hợp, tàu bay không phát tín hiệu gì.","c":"ADS-B qua VDL Mode 4 cũng là giám sát phụ thuộc tự động nên phương án này cũng có thể đúng.","d":"Radar PSR là giám sát độc lập không phối hợp."},"f":"Bản dán không đánh dấu đáp án, đây là đáp án được chọn theo kiến thức CNS/ATM. Độ chắc chắn thấp: phương án C (ADS-B) cũng thuộc giám sát phụ thuộc tự động nên câu hỏi mơ hồ. Đáp án được chọn là B."},{"s":6,"n":"6.1","q":"Các yếu tố môi trường tác động đến hệ thống CNS/ATM?","o":["Thời tiết, địa hình.","Hoạt động trong mọi điều kiện thời tiết.","Đáp ứng việc khai thác liên tục (từ bến đậu tới bến đậu).","Thời tiết, địa hình; Nhiễu, các yếu tố có hại; Sự truyền sóng vô tuyến."],"a":[3],"e":"Môi trường tác động đến CNS/ATM gồm thời tiết và địa hình, nhiễu và các yếu tố có hại, sự truyền sóng vô tuyến. Phương án D gộp đủ các nhóm này.","w":{"a":"Thiếu nhiễu và sự truyền sóng vô tuyến.","b":"Hoạt động trong mọi điều kiện thời tiết là yêu cầu đối với hệ thống, không phải yếu tố môi trường.","c":"Khai thác liên tục từ bến đậu tới bến đậu là yêu cầu khai thác."}},{"s":6,"n":"6.2","q":"Một trong các yêu cầu tổng quát đối với hệ thống CNS/ATM?","o":["Tầm phủ khu vực.","Đáp ứng việc khai thác.","Đáp ứng các tính năng yêu cầu RCP, RNP, RSP.","Không bị ảnh hưởng bởi thời tiết."],"a":[2],"e":"Yêu cầu tổng quát của hệ thống CNS/ATM là đáp ứng các tính năng yêu cầu: RCP cho liên lạc, RNP cho dẫn đường, RSP cho giám sát.","w":{"a":"Yêu cầu là tầm phủ toàn cầu (xem câu 6.3), tầm phủ khu vực chưa đủ.","b":"Câu này nêu thiếu ý khai thác liên tục.","d":"Hệ thống chịu ảnh hưởng của thời tiết ở mức nhất định (câu 6.1), yêu cầu là vẫn hoạt động được trong mọi điều kiện thời tiết."},"f":"Bản dán không đánh dấu đáp án. Độ chắc chắn trung bình: phương án B và D gần với các yêu cầu khai thác ở câu 6.3. Đáp án được chọn là C vì nó nêu ba tiêu chí tính năng RCP, RNP, RSP."},{"s":6,"n":"6.3","q":"Yêu cầu khai thác tổng quát đối với hệ thống CNS/ATM?","o":["Có tầm phủ toàn cầu, hoạt động trong mọi điều kiện thời tiết.","Đáp ứng việc khai thác không liên tục.","Đáp ứng các tính năng không yêu cầu.","Tất cả các câu trên."],"a":[0],"e":"Yêu cầu khai thác tổng quát gồm tầm phủ toàn cầu, hoạt động trong mọi điều kiện thời tiết và khai thác liên tục.","w":{"b":"Hệ thống phải khai thác liên tục, trái với “không liên tục”.","c":"Hệ thống phải đáp ứng các tính năng được yêu cầu, trái với “không yêu cầu”.","d":"Phương án B và C sai nên “tất cả các câu trên” sai."}},{"s":6,"n":"6.4","q":"Ảnh hưởng của địa hình đối với hệ thống CNS/ATM như thế nào?","o":["Không ảnh hưởng.","Làm hạn chế về độ chính xác, hạn chế về tầm phủ của các hệ thống CNS/ATM.","Chỉ ảnh hưởng đến hệ thống thông tin liên lạc.","Chỉ ảnh hưởng đến hệ thống giám sát."],"a":[1],"e":"Địa hình che khuất và phản xạ tín hiệu, làm giảm độ chính xác và thu hẹp tầm phủ của liên lạc, dẫn đường lẫn giám sát.","w":{"a":"Địa hình có ảnh hưởng, xem các câu 6.5 và 6.9.","c":"Ảnh hưởng đến cả dẫn đường và giám sát, không giới hạn ở liên lạc.","d":"Ảnh hưởng đến cả liên lạc và dẫn đường, không giới hạn ở giám sát."}},{"s":6,"n":"6.5","q":"Địa hình ảnh hưởng đến tín hiệu của hệ thống thông tin liên lạc, giám sát như thế nào?","o":["Sự che khuất, phản xạ tín hiệu.","Tốc độ truyền ổn định.","Sự truyền phát đa đường.","Sự che khuất, phản xạ tín hiệu; Sự truyền phát đa đường."],"a":[3],"e":"Địa hình gây che khuất, phản xạ tín hiệu và truyền phát đa đường. Phương án D gộp cả hai nhóm ảnh hưởng.","w":{"a":"Thiếu ảnh hưởng truyền phát đa đường.","b":"Tốc độ truyền ổn định không phải ảnh hưởng của địa hình.","c":"Thiếu ảnh hưởng che khuất, phản xạ tín hiệu."}},{"s":6,"n":"6.6","q":"Sai số chính trong thông tin liên lạc truyền dữ liệu là gì?","o":["Tỷ lệ lỗi.","Nghe hiểu.","Sai số đồng hồ vệ tinh.","Sai số theo đường truyền (PFE)."],"a":[0],"e":"Với truyền dữ liệu, chỉ tiêu chất lượng chính là tỷ lệ lỗi của bản tin nhận được.","w":{"b":"Nghe hiểu là chỉ tiêu của liên lạc thoại.","c":"Sai số đồng hồ vệ tinh là nguồn sai số của GNSS.","d":"PFE không phải thông số chính của kênh truyền dữ liệu."}},{"s":6,"n":"6.7","q":"Sai số chính trong thông tin liên lạc thoại là gì?","o":["Tỷ lệ lỗi.","Nghe hiểu.","Sai số đồng hồ vệ tinh.","Sai số theo đường truyền (PFE)."],"a":[1],"e":"Với liên lạc thoại, chất lượng được đánh giá qua mức độ nghe hiểu của người nhận.","w":{"a":"Tỷ lệ lỗi là chỉ tiêu của truyền dữ liệu.","c":"Sai số đồng hồ vệ tinh là nguồn sai số của GNSS.","d":"PFE không phải chỉ tiêu của liên lạc thoại."}},{"s":6,"n":"6.8","q":"Một trong các sai số của hệ thống GNSS là gì?","o":["Tỷ lệ lỗi.","Nghe hiểu.","Sai số do ảnh hưởng của tầng điện ly và tầng đối lưu.","Sai số theo đường truyền (PFE)."],"a":[2],"e":"Tín hiệu GNSS bị chậm khi đi qua tầng điện ly và tầng đối lưu, gây sai số đo cự ly. Các nguồn sai số khác gồm đồng hồ vệ tinh, dữ liệu lịch thiên văn và đa đường.","w":{"a":"Tỷ lệ lỗi là chỉ tiêu của truyền dữ liệu.","b":"Nghe hiểu là chỉ tiêu của liên lạc thoại.","d":"PFE không nằm trong các nguồn sai số đặc trưng của GNSS."}},{"s":6,"n":"6.9","q":"Địa hình địa vật gần máy thu tín hiệu hệ thống GNSS gây sai số gì?","o":["Sai số đa đường.","Sai số đồng hồ vệ tinh.","Sai số dữ liệu thiên văn.","Sai số tiếng ồn."],"a":[0],"e":"Địa vật gần anten phản xạ tín hiệu vệ tinh, máy thu nhận cả tín hiệu trực tiếp lẫn tín hiệu phản xạ nên gây sai số đa đường.","w":{"b":"Sai số đồng hồ vệ tinh do đồng hồ trên vệ tinh lệch, không liên quan địa vật.","c":"Sai số dữ liệu thiên văn do lịch vệ tinh phát chưa chính xác.","d":"Sai số tiếng ồn do nhiễu nhiệt trong máy thu."}},{"s":6,"n":"6.10","q":"Sai số của hệ thống Radar giám sát thứ cấp (SSR)?","o":["Các sai số về đo phương vị.","Các sai số về đo cự li.","Nhiễu lẫn nhau giữa các thành phần của hệ thống.","Các sai số về đo phương vị, sai số về đo cự li, sai số động, nhiễu lẫn nhau giữa các thành phần của hệ thống."],"a":[3],"e":"Sai số của SSR gồm sai số đo phương vị, sai số đo cự li, sai số động và nhiễu lẫn nhau giữa các thành phần hệ thống. Phương án D gộp tất cả.","w":{"a":"Mới nêu sai số phương vị.","b":"Mới nêu sai số cự li.","c":"Mới nêu nhiễu lẫn nhau giữa các thành phần."}},{"s":6,"n":"6.11","q":"Các sai số của hệ thống giám sát phụ thuộc tự động ADS-C?","o":["Sai số động.","Sai số vị trí tàu bay.","Nhiễu lẫn nhau giữa các thành phần của hệ thống.","Sai số vị trí tàu bay, sai số truyền dữ liệu, sai số động."],"a":[3],"e":"ADS-C có sai số vị trí tàu bay (từ nguồn dẫn đường), sai số truyền dữ liệu và sai số động. Phương án D gộp cả ba.","w":{"a":"Sai số động chỉ là một trong ba nhóm.","b":"Sai số vị trí tàu bay chỉ là một trong ba nhóm.","c":"Nhiễu lẫn nhau giữa các thành phần được nêu cho radar SSR ở câu 6.10, không đặc trưng cho ADS-C."}},{"s":6,"n":"6.12","q":"Yếu tố con người trong sự chuyển đổi sang hệ thống CNS/ATM?","o":["Không cần thiết trong hệ thống CNS/ATM.","Không cần huấn luyện thêm vẫn đáp ứng được yêu cầu mới.","Rất quan trọng để đáp ứng những thách thức của sự thay đổi, thích ứng với yêu cầu mới.","Chỉ yêu cầu đối với KSVKL."],"a":[2],"e":"Chuyển sang CNS/ATM thay đổi thiết bị và quy trình làm việc của kiểm soát viên, phi công, kỹ thuật viên, nên yếu tố con người, gồm huấn luyện và thích ứng, giữ vai trò then chốt.","w":{"a":"Yếu tố con người vẫn cần, vì người khai thác vận hành hệ thống.","b":"Thiết bị và quy trình mới đòi hỏi huấn luyện thêm.","d":"Phi công, kỹ thuật viên và người khai thác cũng chịu ảnh hưởng, ngoài kiểm soát viên không lưu."}},{"s":6,"n":"6.13","q":"Triết lý của CNS/ATM lên vai trò tự động hoá?","o":["Hệ thống máy tính sẽ thay thế con người trong tất cả các quyết định.","Các công cụ phần mềm hỗ trợ quyết định, giúp KSVKL dự đoán, phát hiện, tư vấn, và giải quyết xung đột ở mức độ nhất định.","Những công cụ phần mềm sẽ thay thế KSVKL dự đoán, phát hiện, tư vấn, và giải quyết xung đột ở mức độ nhất định.","Các hệ thống CNS/ATM có thể thay thế các hoạt động nhận thức của kiểm soát viên."],"a":[1],"e":"Trong CNS/ATM, tự động hóa là công cụ hỗ trợ quyết định cho kiểm soát viên không lưu (KSVKL) trong dự đoán, phát hiện, tư vấn và giải quyết xung đột ở mức độ nhất định, con người vẫn giữ quyền quyết định.","w":{"a":"Máy tính không thay thế con người trong mọi quyết định.","c":"Công cụ phần mềm hỗ trợ KSVKL, không thay thế KSVKL.","d":"Hệ thống không thay thế hoạt động nhận thức của kiểm soát viên."}},{"s":6,"n":"6.14","q":"Tác động của yếu tố con người lên tính năng của hệ thống CNS/ATM?","o":["Chất lượng khai thác các hệ thống.","Chất lượng bảo dưỡng.","Xác suất lỗi của người khai thác.","Tất cả các tác động trên."],"a":[3],"e":"Yếu tố con người ảnh hưởng đến chất lượng khai thác, chất lượng bảo dưỡng và xác suất lỗi của người khai thác. Phương án D gộp cả ba.","w":{"a":"Chất lượng khai thác chỉ là một trong ba tác động.","b":"Chất lượng bảo dưỡng chỉ là một trong ba tác động.","c":"Xác suất lỗi chỉ là một trong ba tác động."}},{"s":6,"n":"6.15","q":"Thành phần kỹ thuật không có trong hệ thống CNS/ATM đầy đủ trong tương lai?","o":["Các đường truyền dữ liệu: VDL, HFDL, Mode S, AMSS.","GNSS: GPS, GLONASS, SBAS, GBAS, ABAS.","Các hệ thống quản lý không lưu: ATM.","Hệ thống dẫn đường: VOR, NDB, DME."],"a":[3],"e":"Hệ thống CNS/ATM tương lai dựa trên đường truyền dữ liệu, GNSS và các hệ thống quản lý không lưu. VOR, NDB, DME thuộc hệ thống dẫn đường hiện tại và dần được thay thế.","w":{"a":"Đường truyền dữ liệu VDL, HFDL, Mode S, AMSS là thành phần liên lạc của hệ thống tương lai.","b":"GNSS và các hệ thống tăng cường là thành phần dẫn đường của hệ thống tương lai.","c":"Hệ thống quản lý không lưu (ATM) là thành phần của chính CNS/ATM."},"f":"Bản dán không đánh dấu đáp án. Độ chắc chắn trung bình: trên thực tế VOR và DME vẫn được giữ làm dự phòng trong giai đoạn chuyển tiếp. Ba phương án còn lại đều là thành phần của hệ thống tương lai nên D là phương án loại trừ."},{"s":6,"n":"6.16","q":"Trong các kịch bản quản lý không lưu (ATM), người ta chia mấy loại vùng trời?","o":["2","3","4","5"],"a":[2],"e":"Theo đáp án được chọn, vùng trời trong các kịch bản ATM chia thành 4 loại (xem lưu ý bên dưới).","w":{"a":"Hai loại ít hơn số loại vùng trời được chọn. Các câu 6.17 đến 6.21 đã mô tả ít nhất hai kịch bản bay đường dài khác nhau.","b":"Ba loại ít hơn số loại vùng trời được chọn.","d":"Năm loại nhiều hơn số loại vùng trời được chọn."},"f":"Bản dán không đánh dấu đáp án, đây là đáp án được chọn theo kiến thức CNS/ATM. Độ chắc chắn thấp: chưa có giáo trình gốc để đối chiếu. Các câu 6.17 đến 6.21 nhắc tới ít nhất hai kịch bản bay đường dài (mật độ thấp, và trên Đại dương mật độ cao), nên số loại có thể là 3, 4 hoặc 5."},{"s":6,"n":"6.17","q":"Hệ thống dẫn đường trong kịch bản quản lý không lưu vùng trời Bay đường dài - trên lục địa/trên Đại dương với mật độ bay thấp?","o":["GNSS.","VOR/DME.","NDB.","ILS."],"a":[0],"e":"Vùng bay đường dài mật độ thấp, trên lục địa hay trên biển, ít có đài mặt đất, nên dẫn đường dựa vào GNSS.","w":{"b":"VOR/DME là đài mặt đất tầm nhìn thẳng, không phủ vùng biển xa.","c":"NDB có tầm hạn chế và độ chính xác thấp.","d":"ILS là hệ thống hạ cánh, không dùng cho đường bay."}},{"s":6,"n":"6.18","q":"Hệ thống giám sát trong kịch bản quản lý không lưu vùng trời Bay đường dài - trên lục địa/trên Đại dương với mật độ bay thấp?","o":["ADS-B và ADS-C.","Radar Modes.","VHF vô hướng.","MLAT."],"a":[0],"e":"Với mật độ bay thấp, giám sát phụ thuộc bằng ADS-B và ADS-C kinh tế hơn đầu tư radar, vì tàu bay tự báo vị trí lấy từ GNSS.","w":{"b":"Radar cần đài mặt đất, tốn kém cho mật độ thấp và không phủ biển.","c":"VHF vô hướng không phải hệ thống giám sát.","d":"MLAT (đa điểm) cần nhiều trạm thu, hợp với sân bay và khu vực mật độ cao."}},{"s":6,"n":"6.20","q":"Chức năng dẫn đường trong vùng trời Bay đường dài - trên Đại dương với mật độ bay cao?","o":["GNSS.","VOR.","NDB.","VHF."],"a":[0],"e":"Trên biển, kể cả mật độ cao, không có đài mặt đất, nên dẫn đường dựa vào GNSS với độ chính xác đủ để giảm phân cách.","w":{"b":"VOR là đài mặt đất tầm nhìn thẳng, không phủ biển xa.","c":"NDB có tầm hạn chế và độ chính xác thấp.","d":"VHF là băng tần liên lạc, không phải phương tiện dẫn đường."}},{"s":6,"n":"6.21","q":"Các hệ thống giám sát trong vùng trời Bay đường dài - trên Đại dương với mật độ bay cao mang lại lợi ích gì cho ATM?","o":["Tăng năng lực vùng trời bằng cách giảm phân cách tối thiểu, nhờ cải thiện khả năng giám sát.","Tăng liên lạc trên sóng.","Giảm bớt việc nhận biết tình huống.","Tất cả các câu trên"],"a":[0],"e":"Giám sát tốt hơn cho phép giảm phân cách tối thiểu giữa các tàu bay, nhờ đó tăng năng lực vùng trời trên biển mật độ cao.","w":{"b":"Tăng liên lạc trên sóng không phải lợi ích của hệ thống giám sát.","c":"Giám sát làm tăng nhận biết tình huống, ngược với “giảm bớt”.","d":"Phương án B và C sai nên “tất cả các câu trên” sai."}}];</script>
+<script>
+(function(){
+"use strict";
+const LET="ABCDE";
+const app=document.getElementById("app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store={
+  get(k){try{return localStorage.getItem(k)}catch(e){return null}},
+  set(k,v){try{localStorage.setItem(k,v)}catch(e){}},
+  del(k){try{localStorage.removeItem(k)}catch(e){}}
+};
+const SETS=Array.from(new Set(DATA.map(q=>q.s))).sort((a,b)=>a-b);
+const setName=s=>"Chương "+s;
+const TOPIC={4:"Dẫn đường",5:"Giám sát",6:"Vận hành"};
+const countOf=s=>DATA.filter(q=>q.s===s).length;
+const FLAGGED=DATA.filter(q=>q.f).length;
+const LOGO='<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="12" fill="none" stroke="#7db4ff" stroke-width="2"/><circle cx="15" cy="15" r="6" fill="none" stroke="#7db4ff" stroke-width="1.6" opacity=".7"/><path d="M15 15L24.5 8.5A12 12 0 0 1 27 15z" fill="#2468e0"/><path d="M15 15L24.5 8.5" stroke="#f2f6ff" stroke-width="2" stroke-linecap="round"/><circle cx="15" cy="15" r="1.8" fill="#f2f6ff"/></svg>';
+
+let prefs={};
+try{prefs=JSON.parse(store.get("atm:prefs1")||"{}")||{}}catch(e){prefs={}}
+let hist={};
+try{hist=JSON.parse(store.get("atm:hist1")||"{}")||{}}catch(e){hist={}}
+const savePrefs=()=>store.set("atm:prefs1",JSON.stringify({sets:Array.from(S.sets),shuffle:S.shuffle,limit:S.limit}));
+const saveHist=()=>store.set("atm:hist1",JSON.stringify(hist));
+
+const S={
+  screen:"home",
+  sets:new Set(Array.isArray(prefs.sets)?prefs.sets.filter(x=>SETS.includes(x)):SETS),
+  shuffle:!!prefs.shuffle,
+  limit:[0,10,20].includes(prefs.limit)?prefs.limit:0,
+  round:1,queue:[],pos:0,res:{},correct:0,streak:0,best:0,pick:new Set(),done:false,base:null,arm:false
+};
+
+const shuffled=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const pool=()=>{const r=[];DATA.forEach((q,i)=>{if(S.sets.has(q.s))r.push(i)});return r};
+const sessionSize=()=>{const n=pool().length;return S.limit&&S.limit<n?S.limit:n};
+function buildQueue(){
+  let l=pool();
+  if(S.limit&&S.limit<l.length){l=shuffled(l).slice(0,S.limit);if(!S.shuffle)l.sort((a,b)=>a-b)}
+  else if(S.shuffle)l=shuffled(l);
+  return l;
+}
+function startRound(list,round){
+  S.round=round;S.queue=list.slice();S.pos=0;S.res={};S.correct=0;S.streak=0;
+  S.pick=new Set();S.done=false;S.screen="quiz";render();window.scrollTo(0,0);
+}
+const sameSet=(a,pick)=>pick.size===a.length&&a.every(k=>pick.has(k));
+function matched(q,pick){
+  if(sameSet(q.a,pick))return q.a;
+  const alts=q.alt||[];
+  for(let i=0;i<alts.length;i++)if(sameSet(alts[i],pick))return alts[i];
+  return null;
+}
+function finalize(reveal){
+  const idx=S.queue[S.pos],q=DATA[idx];if(S.done)return;
+  const m=reveal?null:matched(q,S.pick),ok=!!m;
+  S.done=true;
+  S.res[idx]={ok,set:m||q.a,pick:Array.from(S.pick).sort((a,b)=>a-b)};
+  if(ok){S.correct++;S.streak++;S.best=Math.max(S.best,S.streak)}else S.streak=0;
+  hist[idx]=ok?1:0;saveHist();
+  render();
+  const ex=document.getElementById("ex");
+  if(ex&&ex.scrollIntoView){
+    const calm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    ex.scrollIntoView({block:"nearest",behavior:calm?"auto":"smooth"});
+  }
+}
+function topbar(){
+  const quiz=S.screen==="quiz";
+  const prog=quiz?Math.round((S.pos+(S.done?1:0))/S.queue.length*100):0;
+  return '<header class="top'+(quiz?" quiz":"")+'"><div class="in"><div class="brand">'+LOGO+'<span>CNS/ATM</span></div>'+
+    (quiz?'<span class="pill">Đúng <b>'+S.correct+'</b>/'+Object.keys(S.res).length+'</span><span class="pill">Chuỗi '+S.streak+'</span>'+(S.round>1?'<span class="pill">Lượt '+S.round+'</span>':"")+'<button class="link" data-act="home">Thoát</button>':"")+
+    '</div>'+(quiz?'<div class="bar"><i style="width:'+prog+'%"></i></div>':"")+'</header>';
+}
+function setStats(s){
+  let t=0,d=0,w=0;
+  DATA.forEach((q,i)=>{if(q.s===s){t++;if(hist[i]===1)d++;else if(hist[i]===0)w++}});
+  return {t,d,w};
+}
+function savedWrong(){const r=[];DATA.forEach((q,i)=>{if(hist[i]===0)r.push(i)});return r}
+function renderHome(){
+  const n=sessionSize(),sw=savedWrong().length;
+  const done=Object.keys(hist).filter(k=>DATA[k]).length;
+  const tiles=SETS.map(s=>{
+    const st=setStats(s);
+    const label='<small>Chương</small>'+s;
+    return '<button class="set" data-act="set" data-s="'+s+'" aria-pressed="'+S.sets.has(s)+'" aria-label="'+setName(s)+', '+st.t+' câu">'+
+      '<span class="sn">'+label+'</span><span class="sc">'+(TOPIC[s]||"")+'<br>'+st.t+' câu</span>'+
+      '<span class="pb"><i class="g" style="width:'+(st.d/st.t*100)+'%"></i><i class="r" style="width:'+(st.w/st.t*100)+'%"></i></span>'+
+      '<span class="sm">'+((st.d+st.w)?'đúng '+st.d+' · sai '+st.w:'')+'</span></button>';
+  }).join("");
+  const lone='<p class="note">Chưa có các câu 4.9 đến 4.12, 5.12 và 6.19 vì văn bản gốc thiếu hoặc mất chữ ở các câu này. Phần chương 1 đến 3 chưa có trong bộ câu hỏi.</p>';
+  app.innerHTML=topbar()+'<main class="wrap">'+
+  '<section class="hero"><div class="eyebrow">Trắc nghiệm có giải thích</div><h1>Ôn tập <span class="nb">CNS/ATM</span></h1>'+
+  '<p>Chương 4 đến 6 của học phần CNS/ATM: công nghệ dẫn đường, công nghệ giám sát và vận hành khai thác. Xem ngay đáp án và lý do của từng phương án. Các câu làm sai được lưu để làm lại.</p>'+
+  '<div class="facts"><div class="fact"><b>'+DATA.length+'</b><span>câu hỏi</span></div><div class="fact"><b>'+SETS.length+'</b><span>chương</span></div><div class="fact"><b>'+done+'</b><span>câu đã làm</span></div><div class="fact"><b>'+sw+'</b><span>câu đang sai</span></div></div></section>'+
+  '<h2><i>1</i>Chọn chương</h2><div class="sets">'+tiles+'</div>'+
+  '<div class="row"><button class="link" data-act="all">Chọn tất cả</button><button class="link" data-act="none">Bỏ chọn</button></div>'+
+  '<h2><i>2</i>Tùy chọn</h2>'+
+  '<div class="opts-row"><div><div class="lab" id="lm">Số câu mỗi lượt</div><div class="seg" role="group" aria-labelledby="lm" style="margin-top:6px">'+
+  [[0,"Tất cả"],[10,"10 câu"],[20,"20 câu"]].map(x=>'<button data-act="limit" data-n="'+x[0]+'" aria-pressed="'+(S.limit===x[0])+'">'+x[1]+'</button>').join("")+'</div></div>'+
+  '<label class="tog"><input type="checkbox" data-act="shuffle" '+(S.shuffle?"checked":"")+'> Trộn thứ tự câu hỏi</label></div>'+
+  '<div class="row" style="margin-top:26px"><button class="btn pri big" data-act="start" '+(n?"":"disabled")+'>Bắt đầu · '+n+' câu</button>'+
+  (sw?'<button class="btn" data-act="saved">Ôn '+sw+' câu sai đã lưu</button>':"")+'</div>'+
+  '<p class="note">Văn bản gốc không đánh dấu đáp án, nên đáp án được xác định theo kiến thức CNS/ATM. '+FLAGGED+' câu có ô “Lưu ý về đáp án” ghi mức độ chắc chắn, nên đối chiếu các câu này với giáo trình.</p>'+lone+
+  (done?'<div class="row"><button class="link" data-act="reset">'+(S.arm?'Bấm lần nữa để xóa toàn bộ lịch sử làm bài':'Xóa lịch sử làm bài')+'</button></div>':"")+
+  '</main>';
+}
+function dockHtml(q,r){
+  const multi=q.a.length>1;
+  if(S.done){
+    const acc=[q.a].concat(q.alt||[]).filter(s=>s!==r.set);
+    const alt=acc.length?' (cũng chấp nhận: '+acc.map(s=>s.map(k=>LET[k]).join(", ")).join(" hoặc ")+')':"";
+    const last=S.pos+1>=S.queue.length;
+    return '<div class="vd '+(r.ok?"ok":"bad")+'"><b>'+(r.ok?"✓ Chính xác":"✕ Chưa đúng")+'</b><span>Đáp án: '+r.set.map(k=>LET[k]).join(", ")+alt+'</span></div>'+
+      '<button class="btn pri" data-act="next" id="nextbtn">'+(last?"Xem kết quả":"Câu tiếp theo")+'</button>';
+  }
+  if(multi)return '<div class="vd"><span id="pc">Đã chọn '+S.pick.size+'/'+q.a.length+'</span></div><button class="btn" data-act="reveal">Xem đáp án</button><button class="btn pri" data-act="confirm" id="cfm" '+(S.pick.size?"":"disabled")+'>Xác nhận</button>';
+  return '<div class="vd"><span>Chọn một đáp án</span></div><button class="btn" data-act="reveal">Xem đáp án</button>';
+}
+function renderQuiz(){
+  const idx=S.queue[S.pos],q=DATA[idx],multi=q.a.length>1,r=S.res[idx];
+  let opts;
+  if(!S.done){
+    opts=q.o.map((o,k)=>'<button class="opt'+(S.pick.has(k)?" sel":"")+'" data-act="opt" data-k="'+k+'" aria-pressed="'+S.pick.has(k)+'"><span class="lt">'+LET[k]+'</span><span class="ob"><span class="ot">'+esc(o)+'</span></span></button>').join("");
+  }else{
+    opts=q.o.map((o,k)=>{
+      const isAns=r.set.includes(k),picked=r.pick.includes(k);
+      const cls=isAns?(picked||!multi?"ok":"ok miss"):(picked?"bad":"");
+      let tg="";
+      if(isAns&&picked)tg='✓ Bạn chọn đúng';
+      else if(isAns)tg=multi?'✓ Đáp án đúng, bạn chưa chọn':'✓ Đáp án đúng';
+      else if(picked)tg='✕ Bạn đã chọn';
+      const note=q.w&&q.w[LET[k].toLowerCase()];
+      return '<div class="opt '+cls+'" role="listitem"><span class="lt">'+LET[k]+'</span><span class="ob"><span class="ot">'+esc(o)+'</span>'+(tg?'<span class="tg">'+tg+'</span>':"")+(note?'<span class="on">'+esc(note)+'</span>':"")+'</span></div>';
+    }).join("");
+  }
+  const after=S.done?'<section class="ex" id="ex"><h3>Giải thích</h3><p>'+esc(q.e)+'</p></section>'+(q.f?'<section class="flag"><h3>Lưu ý về đáp án</h3><p>'+esc(q.f)+'</p></section>':""):"";
+  const where='Mục '+esc(q.n)+' · '+setName(q.s);
+  app.innerHTML=topbar()+'<main class="wrap q"><article class="qcard"><div class="tag">Câu '+(S.pos+1)+'/'+S.queue.length+' · '+where+'</div><p class="qt">'+esc(q.q)+'</p>'+
+    (multi?'<span class="chip">Chọn đủ '+q.a.length+' đáp án rồi bấm Xác nhận</span>':"")+
+    '<div class="opts"'+(S.done?' role="list"':"")+'>'+opts+'</div>'+after+'</article><p class="kb">Phím tắt: A–E hoặc 1–5 để chọn, Enter để tiếp tục</p></main>'+
+    '<div class="dock"><div class="dk" role="status">'+dockHtml(q,r)+'</div></div>';
+  if(S.done){const nb=document.getElementById("nextbtn");if(nb&&nb.focus)nb.focus({preventScroll:true})}
+}
+const wrongList=()=>S.queue.filter(i=>S.res[i]&&!S.res[i].ok);
+function renderResult(){
+  const total=S.queue.length,w=wrongList(),pct=Math.round(S.correct/total*100);
+  if(S.round===1)S.base={c:S.correct,t:total};
+  const C=2*Math.PI*52;
+  const items=w.map(i=>{
+    const q=DATA[i],p=S.res[i].pick,rs=S.res[i].set;
+    const mine=p.length?p.map(k=>LET[k]+". "+esc(q.o[k])).join("; "):"(chưa chọn)";
+    return '<details><summary>Mục '+esc(q.n)+': '+esc(q.q.length>90?q.q.slice(0,90)+"…":q.q)+'</summary><p>'+esc(q.q)+'</p>'+
+      '<p>Bạn chọn: <b class="bd">'+mine+'</b></p><p>Đáp án đúng: <b class="gd">'+rs.map(k=>LET[k]+". "+esc(q.o[k])).join("; ")+'</b></p><p>'+esc(q.e)+'</p>'+(q.f?'<p><b>Lưu ý:</b> '+esc(q.f)+'</p>':"")+'</details>';
+  }).join("");
+  const head=(!w.length&&S.round>1)?"Đã sửa hết các câu sai":"Kết quả lượt "+S.round;
+  app.innerHTML=topbar()+'<main class="wrap"><section class="score" role="status"><div class="eyebrow">'+head+'</div>'+
+    '<svg class="ring" viewBox="0 0 120 120" role="img" aria-label="'+pct+'% chính xác"><circle class="rt" cx="60" cy="60" r="52"/><circle class="rv'+(pct<50?" low":"")+'" cx="60" cy="60" r="52" transform="rotate(-90 60 60)" stroke-dasharray="'+(C*pct/100).toFixed(1)+' '+C.toFixed(1)+'"/><text class="rp" x="60" y="60">'+pct+'%</text></svg>'+
+    '<div class="sc2">'+S.correct+'<small>/'+total+' câu đúng</small></div>'+
+    '<div class="sub2">'+(w.length?'Còn '+w.length+' câu cần làm lại':'Không còn câu sai trong lượt này')+'</div>'+
+    '<div class="stats"><span class="pill">Sai '+w.length+'</span><span class="pill">Chuỗi đúng dài nhất '+S.best+'</span>'+((S.round>1&&S.base)?'<span class="pill">Lượt đầu '+S.base.c+'/'+S.base.t+'</span>':"")+'</div>'+
+    '<div class="row" style="justify-content:center;margin-top:22px">'+(w.length?'<button class="btn pri big" data-act="redo-wrong">Làm lại '+w.length+' câu sai</button>':"")+'<button class="btn" data-act="redo-all">Làm lại toàn bộ</button><button class="btn" data-act="home">Về trang chủ</button></div></section>'+
+    (w.length?'<h2>Các câu làm sai</h2><div class="wl">'+items+'</div>':"")+'</main>';
+}
+function render(){if(S.screen==="home")renderHome();else if(S.screen==="quiz")renderQuiz();else renderResult()}
+function next(){
+  if(!S.done)return;
+  S.pos++;S.pick=new Set();S.done=false;
+  if(S.pos>=S.queue.length)S.screen="result";
+  render();window.scrollTo(0,0);
+}
+function updateMulti(q){
+  const pc=document.getElementById("pc"),cf=document.getElementById("cfm");
+  if(pc)pc.textContent="Đã chọn "+S.pick.size+"/"+q.a.length;
+  if(cf)cf.disabled=!S.pick.size;
+  app.querySelectorAll('[data-act="opt"]').forEach(b=>{
+    const on=S.pick.has(+b.getAttribute("data-k"));
+    b.classList.toggle("sel",on);b.setAttribute("aria-pressed",on);
+  });
+}
+function choose(k){
+  const q=DATA[S.queue[S.pos]];if(S.done)return;
+  if(q.a.length>1){if(S.pick.has(k))S.pick.delete(k);else S.pick.add(k);updateMulti(q)}
+  else{S.pick=new Set([k]);finalize(false)}
+}
+function startMain(){S.best=0;S.base=null;startRound(buildQueue(),1)}
+app.addEventListener("click",e=>{
+  const el=e.target.closest("[data-act]");if(!el)return;
+  const a=el.getAttribute("data-act");
+  if(a!=="reset"&&S.arm){S.arm=false}
+  if(a==="set"){
+    const s=+el.getAttribute("data-s");
+    if(S.sets.has(s))S.sets.delete(s);else S.sets.add(s);
+    savePrefs();renderHome();
+    const again=app.querySelector('[data-act="set"][data-s="'+s+'"]');if(again&&again.focus)again.focus();
+  }
+  else if(a==="all"){S.sets=new Set(SETS);savePrefs();renderHome()}
+  else if(a==="none"){S.sets=new Set();savePrefs();renderHome()}
+  else if(a==="limit"){S.limit=+el.getAttribute("data-n");savePrefs();renderHome()}
+  else if(a==="start")startMain();
+  else if(a==="saved"){S.best=0;S.base=null;const l=savedWrong();startRound(S.shuffle?shuffled(l):l,1)}
+  else if(a==="reset"){
+    if(S.arm){hist={};store.del("atm:hist1");S.arm=false}else S.arm=true;
+    renderHome();
+  }
+  else if(a==="home"){S.screen="home";render();window.scrollTo(0,0)}
+  else if(a==="opt")choose(+el.getAttribute("data-k"));
+  else if(a==="confirm"){if(S.pick.size)finalize(false)}
+  else if(a==="reveal")finalize(true);
+  else if(a==="next")next();
+  else if(a==="redo-wrong")startRound(wrongList(),S.round+1);
+  else if(a==="redo-all")startMain();
+});
+app.addEventListener("change",e=>{
+  if(e.target&&e.target.getAttribute&&e.target.getAttribute("data-act")==="shuffle"){S.shuffle=e.target.checked;savePrefs()}
+});
+document.addEventListener("keydown",e=>{
+  if(S.screen!=="quiz"||e.ctrlKey||e.metaKey||e.altKey)return;
+  const q=DATA[S.queue[S.pos]];
+  if(e.key==="Enter"){
+    if(S.done){e.preventDefault();next()}
+    else if(q.a.length>1&&S.pick.size){e.preventDefault();finalize(false)}
+    return;
+  }
+  if(e.key.length!==1||S.done)return;
+  let k=LET.indexOf(e.key.toUpperCase());
+  if(k<0&&e.key>="1"&&e.key<="5")k=+e.key-1;
+  if(k>=0&&k<q.o.length)choose(k);
+});
+render();
+})();
+</script>
+
+</body></html>
